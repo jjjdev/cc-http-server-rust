@@ -3,9 +3,11 @@ use std::io::prelude::*;
 
 fn main() {
 
-    println!("Starting server!");
+    let address = "127.0.0.1:4221";
+    println!("Starting server at {}!", address);
 
-    let listener = TcpListener::bind("127.0.0.1:4221").unwrap();
+    let listener = TcpListener::bind(address).unwrap();
+    println!("Now listening for traffic.");
 
     for stream in listener.incoming() {
         match stream {
@@ -46,9 +48,17 @@ fn build_response(request: String) -> String {
     if !lines.is_empty(){
         let req_target: Vec<&str> = lines[0].split_whitespace().collect();
         if req_target.len() > 1 && req_target[1] == "/" {
-            return "HTTP/1.1 200 OK\r\n\r\n".to_string();
+            //return "HTTP/1.1 200 OK\r\n\r\n".to_string();
+            return build_body();
         }
     }
 
     "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
+}
+
+fn build_body() -> String {
+    return "HTTP/1.1 200 OK\r\n\
+        Content-Type: text/plain\r\n
+        Content-Length: 3\r\n\r\n
+        xyz".to_string();
 }
