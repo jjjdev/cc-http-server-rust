@@ -12,7 +12,9 @@ fn main() {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                handle_connection(stream);
+                thread::spawn(|| {
+                    handle_connection(stream);
+                });
                 println!("Good connection!");
             }
             Err(e) => { 
@@ -47,12 +49,12 @@ fn build_response(request: String) -> String {
         println!("No request");
         return "HTTP/1.1 404 Not Found\r\n\r\n".to_string();
     }
-        
-    let req_target_line: Vec<&str> = lines[0].split_whitespace().collect();
-    let req_path = req_target_line[1];
-    
-    let _req_host_line: Vec<&str> = lines[1].split_whitespace().collect();
 
+    // Break down the request into its components
+    // Todo: Build and populate a Request struct    
+    let req_target_line: Vec<&str> = lines[0].split_whitespace().collect();
+    let req_path = req_target_line[1];  
+    let _req_host_line: Vec<&str> = lines[1].split_whitespace().collect();
     let req_user_agent_line: Vec<&str> = lines[2].split_whitespace().collect();
 
     println!("Request target: {}", req_path);
