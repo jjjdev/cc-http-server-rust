@@ -31,9 +31,6 @@ fn handle_connection(mut stream: TcpStream) {
     let request = String::from_utf8_lossy(&buffer[..]);
     println!("Request: {}", request);
 
-    //let request = request.split("\r\n");
-
-
     // --------- Handle response ------------
     let response = build_response(request.to_string());
 
@@ -45,20 +42,42 @@ fn handle_connection(mut stream: TcpStream) {
 fn build_response(request: String) -> String {
 
     let lines: Vec<&str> = request.lines().collect();
-    if !lines.is_empty(){
-        let req_target: Vec<&str> = lines[0].split_whitespace().collect();
-        if req_target.len() > 1 && req_target[1] == "/" {
-            //return "HTTP/1.1 200 OK\r\n\r\n".to_string();
-            return build_body();
-        }
+    if lines.is_empty(){
+        // No request probably needs some other error.
+        println!("No request");
+        return "HTTP/1.1 404 Not Found\r\n\r\n".to_string();
     }
+        
+    let req_target: Vec<&str> = lines[0].split_whitespace().collect();
+    let req_path = req_target[1];
 
-    "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
+    println!("Request target: {}", req_path);
+    
+    // Empty request, return 404
+    if req_target.len() < 1 {
+        return "HTTP/1.1 404 Not Found\r\n\r\n".to_string();
+    }
+    
+    if req_path == "/" { 
+        return "HTTP/1.1 200 OK\r\n\r\n".to_string();
+        //return build_body();
+    }
+    
+    // if the first 5 characters are "/echo", return the rest of the string
+    if &req_path[..5] == "/echo" {
+        let echo = &req_path[6..];
+        return build_body(&echo.to_string());
+    };
+
+    println!("Catchall 404");
+    return "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
 }
 
-fn build_body() -> String {
-    return "HTTP/1.1 200 OK\r\n\
+fn build_body(s: &String) -> String {
+    
+    return String::from(format!("HTTP/1.1 200 OK\r\n\
         Content-Type: text/plain\r\n
         Content-Length: 3\r\n\r\n
-        xyz".to_string();
+        {s}"))
+
 }
