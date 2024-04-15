@@ -81,9 +81,15 @@ fn build_response(request: String) -> String {
 
         println!("Uploading File: {}", filename);
 
-        let mut file = fs::File::create(filename).unwrap();
-        file.write_all(content.as_bytes()).unwrap();
-        return "HTTP/1.1 201 OK\r\n\r\n".to_string();
+        //let mut file = fs::File::create(filename).unwrap();
+        //file.write_all(content.as_bytes()).unwrap();
+
+        let file = fs::write(filename, content.as_bytes());
+
+        match file {
+            Ok(_fc) => return "HTTP/1.1 201 OK\r\n\r\n".to_string(),
+            Err(..) => return "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
+        }
     }
     
     // if the first 5 characters are "/echo", return the rest of the string
