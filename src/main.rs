@@ -80,6 +80,7 @@ fn build_response(request: String) -> String {
         let content = lines.last().unwrap();
 
         println!("Uploading File: {}", filename);
+        println!("Content: {}", content);
 
         //let mut file = fs::File::create(filename).unwrap();
         //file.write_all(content.as_bytes()).unwrap();
