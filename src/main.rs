@@ -1,6 +1,7 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::prelude::*;
 use std::thread;
+use std::fs;
 
 fn main() {
 
@@ -52,8 +53,9 @@ fn build_response(request: String) -> String {
     }
 
     // Break down the request into its components
-    // Todo: Build and populate a Request struct    
+    // Todo: Build and populate a Request struct   
     let req_target_line: Vec<&str> = lines[0].split_whitespace().collect();
+    let _req_method = req_target_line[0];
     let req_path = req_target_line[1];  
     let _req_host_line: Vec<&str> = lines[1].split_whitespace().collect();
     let req_user_agent_line: Vec<&str> = lines[2].split_whitespace().collect();
@@ -71,7 +73,6 @@ fn build_response(request: String) -> String {
     }
     
     // if the first 5 characters are "/echo", return the rest of the string
-    //if &req_path[..5] == "/echo" {
     if req_path.starts_with("/echo"){
         let echo = &req_path[6..];
         println!("Echoing {}" , echo);
@@ -81,6 +82,29 @@ fn build_response(request: String) -> String {
         let req_user_agent = req_user_agent_line[1];
         println!("Returning user-agent: {}" , req_user_agent);
         return build_body(&req_user_agent.to_string());
+    }
+    else if req_path.starts_with("/files") {
+        let filename = &req_path[7..];
+        println!("Reading file: {}", filename);
+        //return retrieve_file(&file.to_string());
+
+        let file = fs::read_to_string(filename);
+
+        match file { 
+            Ok(fc) => {
+                println!("File opened successfully");
+                return format!("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {}\r\n\r\n{}\r\n", fc.len(), fc.to_string())
+            }
+            Err(error) => {
+                println!("Error opening file: {}", error);
+                return "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
+            }
+        }
+    
+        //let content_length = fc.len();
+        //let file_content = fc.to_string();
+
+        //return format!("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {content_length}\r\n\r\n{file_content}\r\n")
     }
 
     println!("Catchall 404");
