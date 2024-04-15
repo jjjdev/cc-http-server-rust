@@ -2,6 +2,7 @@ use std::net::{TcpListener, TcpStream};
 use std::io::prelude::*;
 use std::thread;
 use std::fs;
+use std::env;
 
 fn main() {
 
@@ -84,9 +85,12 @@ fn build_response(request: String) -> String {
         return build_body(&req_user_agent.to_string());
     }
     else if req_path.starts_with("/files") {
-        let filename = &req_path[7..];
+        let filename = &req_path[7..];  
+        let args: Vec<String> = env::args().collect();
+        let dir = args[2].to_string();
+
+        let filename = format!("{}/{}", dir, filename);
         println!("Reading file: {}", filename);
-        //return retrieve_file(&file.to_string());
 
         let file = fs::read_to_string(filename);
 
@@ -100,11 +104,6 @@ fn build_response(request: String) -> String {
                 return "HTTP/1.1 404 Not Found\r\n\r\n".to_string()
             }
         }
-    
-        //let content_length = fc.len();
-        //let file_content = fc.to_string();
-
-        //return format!("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {content_length}\r\n\r\n{file_content}\r\n")
     }
 
     println!("Catchall 404");
