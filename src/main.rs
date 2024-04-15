@@ -77,11 +77,12 @@ fn build_response(request: String) -> String {
         let filename = &req_path[7..];
         let args: Vec<String> = env::args().collect();
         let filename = format!("{}/{}", args[2].to_string(), filename);
+        let content = lines.last().unwrap();
 
         println!("Uploading File: {}", filename);
 
         let mut file = fs::File::create(filename).unwrap();
-        //file.write_all(content.as_bytes()).unwrap();
+        file.write_all(content.as_bytes()).unwrap();
         return "HTTP/1.1 201 OK\r\n\r\n".to_string();
     }
     
