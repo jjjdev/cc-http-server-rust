@@ -77,7 +77,9 @@ fn build_response(request: String) -> String {
         let filename = &req_path[7..];
         let args: Vec<String> = env::args().collect();
         let filename = format!("{}{}", args[2].to_string(), filename);
-        let content = lines.last().unwrap();
+        //let content = lines.last().unwrap();
+        let content = lines[lines.len()-1];
+        let content = &content[0..55].to_string();
 
         println!("Uploading File: {}", filename);
         println!("Content: {}", content);
