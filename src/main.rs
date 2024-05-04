@@ -1,7 +1,7 @@
 use std::net::{TcpListener, TcpStream};
-use std::io::prelude::*;
+use std::io::*;
 use std::thread;
-use std::fs;
+use std::fs::{self, File};
 use std::env;
 
 fn main() {
@@ -115,10 +115,19 @@ fn build_response(request: String) -> String {
         println!("Reading file: {}", filename);
 
         let file = fs::read_to_string(filename);
+        //let mut reader = File::open(filename).unwrap();
+
+        //let file = File::open(filename);
+        //let mut file = BufReader::new(file);
+        //let mut data = Vec::new();
+        //file.seek(SeekFrom::Start(offset)).unwrap();
+        //file.read_until(b'\0', &mut data).unwrap();
+
 
         match file { 
             Ok(fc) => {
                 println!("File opened successfully");
+                let fc = fc.trim_end_matches(char::from(0));
                 return format!("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {}\r\n\r\n{}\r\n", fc.len(), fc.to_string())
             }
             Err(error) => {
