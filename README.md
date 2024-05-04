@@ -1,2 +1,2 @@
-# cc-http-server-rust
-http server from scratch - code crafters 
+# http-server-rust
+http server from scratch in rust
