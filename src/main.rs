@@ -79,7 +79,8 @@ fn build_response(request: String) -> String {
         let filename = format!("{}{}", args[2].to_string(), filename);
         //let content = lines.last().unwrap();
         let content = lines[lines.len()-1];
-        let content = &content[0..65].to_string();
+        let content = &content[0..].to_string();
+        let content = content.trim_end_matches(char::from(0));
 
         println!("Uploading File: {}", filename);
         println!("Content: {}", content);
@@ -115,18 +116,10 @@ fn build_response(request: String) -> String {
         println!("Reading file: {}", filename);
 
         let file = fs::read_to_string(filename);
-        //let mut reader = File::open(filename).unwrap();
-
-        //let file = File::open(filename);
-        //let mut file = BufReader::new(file);
-        //let mut data = Vec::new();
-        //file.seek(SeekFrom::Start(offset)).unwrap();
-        //file.read_until(b'\0', &mut data).unwrap();
 
         match file { 
             Ok(fc) => {
                 println!("File opened successfully");
-                let fc = fc.trim_end_matches(char::from(0));
                 return format!("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {}\r\n\r\n{}\r\n", fc.len(), fc.to_string())
             }
             Err(error) => {
