@@ -1,7 +1,7 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::*;
 use std::thread;
-use std::fs::{self, File};
+use std::fs;
 use std::env;
 
 fn main() {
