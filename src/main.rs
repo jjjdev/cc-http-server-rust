@@ -79,7 +79,7 @@ fn build_response(request: String) -> String {
         let filename = format!("{}{}", args[2].to_string(), filename);
         //let content = lines.last().unwrap();
         let content = lines[lines.len()-1];
-        let content = &content[0..54].to_string();
+        let content = &content[0..].to_string();
 
         println!("Uploading File: {}", filename);
         println!("Content: {}", content);
@@ -122,7 +122,6 @@ fn build_response(request: String) -> String {
         //let mut data = Vec::new();
         //file.seek(SeekFrom::Start(offset)).unwrap();
         //file.read_until(b'\0', &mut data).unwrap();
-
 
         match file { 
             Ok(fc) => {
